@@ -7,10 +7,12 @@ os.environ['HTTP_PROXY'] = os.environ['HTTPS_PROXY'] = 'http://localhost:12333'
 
 
 class Model:
-    def __init__(self, args, fields):
-        self.api = api = PushshiftAPI()
+    def __init__(self):
+        self.api = PushshiftAPI()
+
+    def getsub(self, args, fields):
         # Get submissions under r/wallstreetbets, includes GME
-        self.submissions = api.search_submissions(
+        self.submissions = self.api.search_submissions(
             after=args.after,
             before=args.before,
             fields=fields,
@@ -25,9 +27,12 @@ class Model:
         print('\n', end='')
         self.sublist = [s for s in self.submissions]
         self.subdf = pd.DataFrame(self.sublist)
+        self.subdf.to_csv('sub.csv')
+        print(f'Saved {len(self.comlist)} pieces of Submissions to "sub.csv".')
 
+    def getcom(self, args, fields):
         # Get comments under r/wallstreetbets, includes GME
-        self.comments = api.search_comments(
+        self.comments = self.api.search_comments(
             after=args.after,
             before=args.before,
             fields=fields,
@@ -41,6 +46,8 @@ class Model:
         print('\n', end='')
         self.comlist = [c for c in self.comments]
         self.comdf = pd.DataFrame(self.comlist)
+        self.comdf.to_csv('com.csv')
+        print(f'Saved {len(self.comlist)} pieces of Comments to "com.csv".')
 
     def len_com(self):
         return len(self.comlist)
