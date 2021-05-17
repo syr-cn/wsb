@@ -1,12 +1,8 @@
-# An wsb-comment analyser based on praw and pytorch
+# An wsb-comment analyser based on praw and pytorch(maybe not)
 
-## 日志
-2021/5/2
-事实证明praw不好使...官方已经不让使用它获取历史数据了。
-可以考虑别的方法。
+TODO
 
-这个是一个第三方的搜索引擎，缺点是不知道怎么导出
-https://redditsearch.io/
-
-这个不错，感觉可以转为pmaw
-https://github.com/pushshift/api#searching-comments
+- [x] 数据获取工作的可行性问题
+- [ ] 服务器
+- [ ] 现成词向量(pretrained word embeddings)获取
+- [ ] Unsupervised训练 OR 语料库
