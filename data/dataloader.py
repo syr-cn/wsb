@@ -1,13 +1,16 @@
 import pandas as pd
 
 
-class Dataloader:
-    def __init__(self):
-        self.pathx = './testx.csv'
-        self.pathy = './testy.csv'
+pathx = '~/Music/wsb/data/testx.csv'
+pathy = '~/Music/wsb/data/testy.csv'
 
-    def getx(self):
-        return pd.read_csv(self.pathx)
 
-    def gety(self):
-        return pd.read_csv(self.pathy)
+def getx():
+    x = pd.read_csv(pathx)
+    # x.drop_duplicates()
+    x = x.sort_values('created_utc')
+    return x
+
+
+def gety():
+    return pd.read_csv(pathy)
