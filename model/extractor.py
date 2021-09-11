@@ -19,8 +19,8 @@ def yield_tokens(data_iter):
         yield tokenizer(text)
 
 
-vocab = build_vocab_from_iterator(yield_tokens(train_iter), specials=["<unk>"])
-vocab.set_default_index(vocab["<unk>"])  # 预设生词为0
+vocab = build_vocab_from_iterator(yield_tokens(train_iter), specials=['<unk>'])
+vocab.set_default_index(vocab['<unk>'])  # 预设生词为0
 # vocab实现词与编号的映射
 
 
@@ -28,7 +28,11 @@ def txt2idx(s):
     return vocab(tokenizer(s))
 
 
+# Test
 s = 'Here\'s the it xjtusyrnb an example!,?.'
 print(tokenizer(s))
-print(vocab.lookup_token(0))
+# print(vocab.lookup_token(0))
 print(txt2idx(s))
+
+labels = set([label for label, _ in train_iter])
+print(len(labels))
