@@ -7,9 +7,11 @@ import torch
 from torchtext.datasets import AG_NEWS
 from torchtext.data.utils import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
+from .LSTM import LSTM
 
 tokenizer = get_tokenizer('basic_english')
 train_iter = AG_NEWS(split='train')
+train_iter = list(train_iter)
 # train_iter可以直接在这里改，下面yield_tokens函数也要改
 # tokenizer(str)可以把字符串分割为列表，全部转化为小写，遇到符号会单独分成一个字符（很合理），不能智能识别"'s"为"is"
 
@@ -28,11 +30,33 @@ def txt2idx(s):
     return vocab(tokenizer(s))
 
 
-# Test
-s = 'Here\'s the it xjtusyrnb an example!,?.'
-print(tokenizer(s))
-# print(vocab.lookup_token(0))
-print(txt2idx(s))
+def tag2vec(i):
+    vec = [0, 0, 0, 0]
+    vec[i] = 1
+    vec = torch.Tensor(vec)
+    return vec
 
-labels = set([label for label, _ in train_iter])
-print(len(labels))
+
+# Test
+# s = 'Here\'s the it xjtusyrnb an example!,?.'
+# print(tokenizer(s))
+# print(vocab.lookup_token(0))
+# print(txt2idx(s))
+
+
+vocab_size = len(vocab)
+input_dim = 30
+hidden_dim = 25
+output_dim = 4
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = LSTM(vocab_size, input_dim, hidden_dim, output_dim).to(device)
+loss_function = torch.nn.MSELoss()
+optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+
+with torch.no_grad():
+    lbl, txt = train_iter[0]
+
+
+def train(dataloader):
+    pass

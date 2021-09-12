@@ -1,13 +1,13 @@
 import torch
 import torch.nn.functional as F
 
-input_dim = 30
-hidden_dim = 25
-output_dim = 5
+torch.manual_seed(1)
+# random seed
 
 
 class LSTM(torch.nn.Module):
     def __init__(self, vocab_size, input_dim, hidden_dim, output_dim):
+        # hidden_dim aka embedding_dim
         super(LSTM, self).__init__()
         self.input_dim = input_dim
         self.hidden_dim = hidden_dim
@@ -23,4 +23,8 @@ class LSTM(torch.nn.Module):
         self.fc.bias.data.zero_(-initrange, initrange)
 
     def forward(self, text):
-        pass
+        embeds = self.embedding(text)
+        hidden, _ = self.lstm(embeds.view(len(text), 1, -1))
+        out_vec = self.fc(hidden.view(len(text), -1))
+        output = F.log_softmax(out_vec, dim=1)
+        return output
