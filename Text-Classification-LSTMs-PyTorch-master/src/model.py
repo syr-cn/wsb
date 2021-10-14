@@ -3,14 +3,15 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class TweetClassifier(nn.ModuleList):
+class RedditAnalyzer(nn.ModuleList):
 
     def __init__(self, args):
-        super(TweetClassifier, self).__init__()
+        super(RedditAnalyzer, self).__init__()
 
         self.batch_size = args.batch_size
         self.hidden_dim = args.hidden_dim
         self.LSTM_layers = args.lstm_layers
+        self.fc_dim = args.fc_dim
         self.input_size = args.max_words  # embedding dimention
 
         self.device = torch.device(
@@ -21,8 +22,8 @@ class TweetClassifier(nn.ModuleList):
         self.lstm = nn.LSTM(input_size=self.hidden_dim, hidden_size=self.hidden_dim,
                             num_layers=self.LSTM_layers, batch_first=True)
         self.fc1 = nn.Linear(in_features=self.hidden_dim,
-                             out_features=257, device=self.device)
-        self.fc2 = nn.Linear(257, 1, device=self.device)
+                             out_features=self.fc_dim, device=self.device)
+        self.fc2 = nn.Linear(self.fc_dim, 1, device=self.device)
 
     def forward(self, x):
         h = torch.zeros((self.LSTM_layers, x.size(0),

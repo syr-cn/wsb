@@ -10,7 +10,7 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import accuracy_score
 
 from src import Preprocessing
-from src import TweetClassifier
+from src import RedditAnalyzer
 
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
@@ -52,7 +52,7 @@ class Execute:
         self.args = args
         self.batch_size = args.batch_size
 
-        self.model = TweetClassifier(args).to(device)
+        self.model = RedditAnalyzer(args).to(device)
 
     def __init_data__(self, args):
         '''
@@ -73,9 +73,10 @@ class Execute:
         self.x_test = self.preprocessing.sequence_to_token(raw_x_test)
 
     def train(self):
-        if(os.path.exists(PATH)):
-            return
-            self.model.load_state_dict(torch.load(PATH))
+        # [TODO] : save and load
+        # if(os.path.exists(PATH)):
+        #     return
+        #     self.model.load_state_dict(torch.load(PATH))
         training_set = DatasetMaper(self.x_train, self.y_train)
         test_set = DatasetMaper(self.x_test, self.y_test)
 
