@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 import torch
 import torch.nn as nn
@@ -16,6 +17,9 @@ from torch.utils.data import DataLoader
 
 from src import parameter_parser
 
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+PATH = '/home/syr/Music/wsb/Text-Classification-LSTMs-PyTorch-master/pretrained/lstm_2'
+
 
 class DatasetMaper(Dataset):
     '''
@@ -30,10 +34,10 @@ class DatasetMaper(Dataset):
         return len(self.x)
 
     def __getitem__(self, idx):
-        tmpy = [0 for i in range(4)]
-        tmpy[self.y[idx]-1] = 1
-        tmpy = torch.tensor(tmpy)
-        return self.x[idx], tmpy
+        # tmpy = [0 for i in range(4)]
+        # tmpy[self.y[idx]-1] = 1
+        # tmpy = torch.tensor(tmpy)
+        return self.x[idx], self.y[idx]
 
 
 class Execute:
@@ -48,7 +52,7 @@ class Execute:
         self.args = args
         self.batch_size = args.batch_size
 
-        self.model = TweetClassifier(args)
+        self.model = TweetClassifier(args).to(device)
 
     def __init_data__(self, args):
         '''
@@ -69,7 +73,9 @@ class Execute:
         self.x_test = self.preprocessing.sequence_to_token(raw_x_test)
 
     def train(self):
-
+        if(os.path.exists(PATH)):
+            return
+            self.model.load_state_dict(torch.load(PATH))
         training_set = DatasetMaper(self.x_train, self.y_train)
         test_set = DatasetMaper(self.x_test, self.y_test)
 
@@ -87,9 +93,9 @@ class Execute:
 
             for x_batch, y_batch in self.loader_training:
 
-                x = x_batch.type(torch.LongTensor)
-                y = y_batch.type(torch.FloatTensor)
-                y = y.view(-1, 4)
+                x = x_batch.type(torch.LongTensor).to(device)
+                y = y_batch.type(torch.FloatTensor).to(device)
+                y = y.view(-1, 1)
 
                 y_pred = self.model(x)
 
@@ -101,7 +107,7 @@ class Execute:
 
                 optimizer.step()
 
-                predictions += list(y_pred.squeeze().detach().numpy())
+                predictions += list(y_pred.squeeze().detach().cpu().numpy())
 
             test_predictions = self.evaluation()
 
@@ -111,6 +117,7 @@ class Execute:
 
             print("Epoch: %d, loss: %.5f, Train accuracy: %.5f, Test accuracy: %.5f" % (
                 epoch+1, loss.item(), train_accuary, test_accuracy))
+        torch.save(self.model.state_dict(), PATH)
 
     def evaluation(self):
 
@@ -118,11 +125,11 @@ class Execute:
         self.model.eval()
         with torch.no_grad():
             for x_batch, y_batch in self.loader_test:
-                x = x_batch.type(torch.LongTensor)
-                y = y_batch.type(torch.FloatTensor)
+                x = x_batch.type(torch.LongTensor).to(device)
+                y = y_batch.type(torch.FloatTensor).to(device)
 
                 y_pred = self.model(x)
-                predictions += list(y_pred.detach().numpy())
+                predictions += list(y_pred.detach().cpu().numpy())
 
         return predictions
 
@@ -132,18 +139,18 @@ class Execute:
         true_negatives = 0
 
         for true, pred in zip(grand_truth, predictions):
-            idp = 0
-            for i in range(1, len(pred)):
-                if pred[i] > pred[idp]:
-                    idp = i
-            if(true-1 == idp):
-                true_positives += 1
-            # if (pred > 0.5) and (true == 1):
+            # idp = 0
+            # for i in range(1, len(pred)):
+            #     if pred[i] > pred[idp]:
+            #         idp = i
+            # if(true-1 == idp):
             #     true_positives += 1
-            # elif (pred < 0.5) and (true == 0):
-            #     true_negatives += 1
-            # else:
-            #     pass
+            if (pred > 0.5) and (true == 1):
+                true_positives += 1
+            elif (pred < 0.5) and (true == 0):
+                true_negatives += 1
+            else:
+                pass
 
         return (true_positives+true_negatives) / len(grand_truth)
 
