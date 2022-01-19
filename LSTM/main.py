@@ -19,7 +19,7 @@ from torch.utils.data import DataLoader
 from src import parameter_parser
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-PATH = '/home/syr/Music/wsb/Text-Classification-LSTMs-PyTorch-master/pretrained/lstm_2'
+PATH = '/home/syr/Music/wsb/LSTM/pretrained/lstm_2'
 
 
 class DatasetMaper(Dataset):
