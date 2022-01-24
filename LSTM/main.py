@@ -119,7 +119,7 @@ class Execute:
                 self.y_test, test_predictions)
 
             print(
-                f"Epoch: {epoch+1},\t loss: {loss.item():.6f},\t Train loss([s,an]): {train_accuary},\t Test loss([s,an]):{test_accuracy}")
+                f"Epoch: {epoch+1},\t loss: {100*loss.item():.2f}%,\t Train error([s,an]): {train_accuary},\t Test error([s,an]):{test_accuracy}")
         torch.save(self.model.state_dict(), PATH)
 
     def evaluation(self):
@@ -158,7 +158,7 @@ class Execute:
             # print([2*i-1 for i in true],
             #       [2*i-1 for i in pred], sep='\t', end='\n')
             # 输出预测值与真实值
-            res = abs(pred-true)
+            res = abs(pred-true)*2
             ans += res
 
         return ans / len(grand_truth)
