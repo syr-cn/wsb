@@ -118,8 +118,8 @@ class Execute:
             test_accuracy = self.calculate_accuray(
                 self.y_test, test_predictions)
 
-            print("Epoch: %d, loss: %.5f, Train accuracy: %.5f, Test accuracy: %.5f" % (
-                epoch+1, loss.item(), train_accuary, test_accuracy))
+            print(
+                f"Epoch: {epoch+1},\t loss: {loss.item():.6f},\t Train loss([s,an]): {train_accuary},\t Test loss([s,an]):{test_accuracy}")
         torch.save(self.model.state_dict(), PATH)
 
     def evaluation(self):
@@ -141,6 +141,7 @@ class Execute:
         true_positives = 0
         true_negatives = 0
 
+        ans = np.array([0, 0], dtype=np.float64)
         for true, pred in zip(grand_truth, predictions):
             # idp = 0
             # for i in range(1, len(pred)):
@@ -153,15 +154,14 @@ class Execute:
             #     true_positives += 1
             # elif (pred < 0.5) and (true == 0):
             #     true_negatives += 1
+
             # print([2*i-1 for i in true],
             #       [2*i-1 for i in pred], sep='\t', end='\n')
+            # 输出预测值与真实值
             res = abs(pred-true)
-            if res[0] <= 0.25 and res[1] <= 0.5:
-                true_positives += 1
-            else:
-                pass
+            ans += res
 
-        return (true_positives+true_negatives) / len(grand_truth)
+        return ans / len(grand_truth)
 
 
 if __name__ == "__main__":
@@ -169,4 +169,5 @@ if __name__ == "__main__":
     args = parameter_parser()
 
     execute = Execute(args)
+    np.set_printoptions(precision=6)
     execute.train()

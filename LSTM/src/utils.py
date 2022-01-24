@@ -13,7 +13,7 @@ import math
 class Preprocessing:
 
     def __init__(self, args):
-        self.data = 'data/500final.csv'
+        self.data = 'data/1_250-500.csv'
         # self.data = 'data/ag_news.csv'
         self.max_len = args.max_len
         self.max_words = args.max_words
@@ -21,6 +21,10 @@ class Preprocessing:
 
     def load_data(self):
         df = pd.read_csv(self.data)
+        # more options can be specified also
+        # csv文件中不能存在comma，这个问题我还没想好怎么处理...
+        # with pd.option_context('display.max_rows', 999, 'display.max_columns', 999):
+        #     print(df)
         # df.drop(['id', 'keyword', 'location'], axis=1, inplace=True)
 
         X = df['body'].values
