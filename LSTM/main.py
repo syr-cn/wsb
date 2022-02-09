@@ -119,7 +119,7 @@ class Execute:
                 self.y_test, test_predictions)
 
             print(
-                f"Epoch: {epoch+1},\t loss: {100*loss.item():.2f}%,\t Train error([s,an]): {train_accuary},\t Test error([s,an]):{test_accuracy}")
+                f"Epoch {epoch+1}:\t loss: {loss.item():.6f},\t Train error([s,an]): {train_accuary},\t Test error([s,an]):{test_accuracy}")
         torch.save(self.model.state_dict(), PATH)
 
     def evaluation(self):
