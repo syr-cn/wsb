@@ -13,8 +13,8 @@ parser.add_argument('-before', type=int,
 parser.add_argument('-after', type=int,
                     default=int(dt.datetime(2021, 1, 1, 0, 0).timestamp()))
 # subreddit
-parser.add_argument('-q', type=list, default=['gme', 'gamestop'])
-# q 为关键字列表
+parser.add_argument('-q', type=list, default=['Apple', 'aapl'])
+# q 为关键字列表，大小写不敏感
 parser.add_argument('-subreddit', type=str, default='wallstreetbets')
 parser.add_argument('-submissions_sort_type', type=str, default='num_comments',
                     choices=['created_utc', 'score', 'num_comments'])
