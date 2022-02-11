@@ -22,7 +22,7 @@ parser.add_argument('-comments_sort_type', type=str, default='score',
                     choices=['created_utc', 'score', 'num_comments'])
 # limits
 parser.add_argument('-submissions_limit', type=int, default=3000)
-parser.add_argument('-comments_limit', type=int, default=5000)
+parser.add_argument('-comments_limit', type=int, default=200)
 # 获取的评论条数下限
 parser.add_argument('-num_comments', type=str, default='>20')
 # response filter

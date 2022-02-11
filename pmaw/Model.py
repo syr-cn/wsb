@@ -1,6 +1,7 @@
 import argparse
 import pandas as pd
 from pmaw import PushshiftAPI
+import datetime as dt
 
 import os
 os.environ['HTTP_PROXY'] = os.environ['HTTPS_PROXY'] = 'http://localhost:3898'
@@ -35,21 +36,38 @@ class Model:
     def getcom(self, args, fields, path):
         # Get comments under r/wallstreetbets, includes GME
         # added multi-keyword support
+        times = [
+            dt.datetime(2021, 1, 1, 0, 0),
+            dt.datetime(2021, 2, 1, 0, 0),
+            dt.datetime(2021, 3, 1, 0, 0),
+            dt.datetime(2021, 4, 1, 0, 0),
+            dt.datetime(2021, 5, 1, 0, 0),
+            dt.datetime(2021, 6, 1, 0, 0),
+            dt.datetime(2021, 7, 1, 0, 0),
+            dt.datetime(2021, 8, 1, 0, 0),
+            dt.datetime(2021, 9, 1, 0, 0),
+            dt.datetime(2021, 10, 1, 0, 0),
+            dt.datetime(2021, 11, 1, 0, 0),
+            dt.datetime(2021, 12, 1, 0, 0),
+            dt.datetime(2022, 1, 1, 0, 0),
+        ]
+        times = [int(i.timestamp()) for i in times]
         self.comlist = []
         for q in args.q:
-            self.comments = self.api.search_comments(
-                after=args.after,
-                before=args.before,
-                fields=fields,
-                limit=args.comments_limit,
-                mem_safe=True,
-                q=q,
-                safe_exit=True,
-                sort_type=args.comments_sort_type,
-                subreddit=args.subreddit
-            )
+            for i in range(len(times)-1):
+                self.comments = self.api.search_comments(
+                    after=times[i],
+                    before=times[i+1],
+                    fields=fields,
+                    limit=args.comments_limit,
+                    mem_safe=True,
+                    q=q,
+                    safe_exit=True,
+                    sort_type=args.comments_sort_type,
+                    subreddit=args.subreddit
+                )
+                self.comlist.extend([c for c in self.comments])
             print('\n', end='')
-            self.comlist.extend([c for c in self.comments])
         self.comdf = pd.DataFrame(self.comlist)
         self.comdf.to_csv(path)
         print(f'Saved {len(self.comlist)} pieces of Comments to "{path}".')
