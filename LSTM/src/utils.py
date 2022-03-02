@@ -34,16 +34,19 @@ class Preprocessing:
         X = df['body'].values
         Y = df[keys].values
 
+        Z = X[1000:1010]
         X = X[0:1000]
         Y = Y[0:1000]
 
         X = [str(i) for i in X]
+        Z = [str(i) for i in Z]
         Y = [[0 if math.isnan(j) else (j+1)/2
               for j in i]
              for i in Y]
 
         self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(
             X, Y, test_size=self.test_size)
+        self.z = Z
 
     def prepare_tokens(self):
         self.tokens = Tokenizer(num_words=self.max_words)

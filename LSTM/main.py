@@ -73,7 +73,10 @@ class Execute:
         self.y_test = self.preprocessing.y_test
 
         self.x_train = self.preprocessing.sequence_to_token(raw_x_train)
+        print(self.x_train.shape)
         self.x_test = self.preprocessing.sequence_to_token(raw_x_test)
+
+        self.z = self.preprocessing.z
 
     def train(self):
         # [TODO] : save and load
@@ -130,12 +133,27 @@ class Execute:
         with torch.no_grad():
             for x_batch, y_batch in self.loader_test:
                 x = x_batch.type(torch.LongTensor).to(device)
-                y = y_batch.type(torch.FloatTensor).to(device)
+                # y = y_batch.type(torch.FloatTensor).to(device)
 
                 y_pred = self.model(x)
                 predictions += list(y_pred.detach().cpu().numpy())
 
         return predictions
+
+    def test(self):
+        self.model.eval()
+        with torch.no_grad():
+            for z in self.z:
+                print("")
+                # z is string
+                sentence_embeding = self.preprocessing.sequence_to_token([z])
+                sentence_embeding = torch.Tensor(sentence_embeding)
+                sentence = sentence_embeding.type(torch.LongTensor).to(device)
+                rslt = self.model(sentence)
+                rslt = rslt.squeeze().detach().cpu().numpy()
+                print(z, rslt, sep='\n')
+                print("")
+#
 
     @staticmethod
     def calculate_accuray(grand_truth, predictions):
@@ -159,6 +177,9 @@ class Execute:
             # print([2*i-1 for i in true],
             #       [2*i-1 for i in pred], sep='\t', end='\n')
             # 输出预测值与真实值
+
+            # 慎用这一句输出！
+            # print(f'{pred}\t{true}', end='\n')
             res = abs(pred-true)*2
             ans += res
 
@@ -172,3 +193,4 @@ if __name__ == "__main__":
     execute = Execute(args)
     np.set_printoptions(precision=6)
     execute.train()
+    execute.test()
