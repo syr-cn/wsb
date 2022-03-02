@@ -23,7 +23,7 @@ class RedditAnalyzer(nn.ModuleList):
                             num_layers=self.LSTM_layers, batch_first=True)
         self.fc1 = nn.Linear(in_features=self.hidden_dim,
                              out_features=self.fc_dim, device=self.device)
-        self.fc2 = nn.Linear(self.fc_dim, 2, device=self.device)
+        self.fc2 = nn.Linear(self.fc_dim, 3, device=self.device)
 
     def forward(self, x):
         h = torch.zeros((self.LSTM_layers, x.size(0),

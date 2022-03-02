@@ -13,23 +13,31 @@ import math
 class Preprocessing:
 
     def __init__(self, args):
-        self.data = 'data/1_250-500.csv'
+        self.data = 'data/3_1/1/Palantir.CSV'
+        # self.data = 'data/1_250-500.csv'
         # self.data = 'data/ag_news.csv'
         self.max_len = args.max_len
         self.max_words = args.max_words
         self.test_size = args.test_size
 
     def load_data(self):
+        print(f'[Loading]\treading {self.data.split("/")[-1]}')
         df = pd.read_csv(self.data)
+        keys = ['positive', 'rebellion', 'unity']
+        print(f'[Format]\tkeys = {keys}')
+
         # more options can be specified also
         # csv文件中不能存在comma，这个问题我还没想好怎么处理...
         # with pd.option_context('display.max_rows', 999, 'display.max_columns', 999):
         #     print(df)
         # df.drop(['id', 'keyword', 'location'], axis=1, inplace=True)
-
         X = df['body'].values
+        Y = df[keys].values
+
+        X = X[0:1000]
+        Y = Y[0:1000]
+
         X = [str(i) for i in X]
-        Y = df[['s', 'an']].values
         Y = [[0 if math.isnan(j) else (j+1)/2
               for j in i]
              for i in Y]

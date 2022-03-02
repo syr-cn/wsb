@@ -20,6 +20,7 @@ from src import parameter_parser
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 PATH = '/home/syr/Music/wsb/LSTM/pretrained/lstm_2'
+y_dim = 3
 
 
 class DatasetMaper(Dataset):
@@ -98,7 +99,7 @@ class Execute:
 
                 x = x_batch.type(torch.LongTensor).to(device)
                 y = y_batch.type(torch.FloatTensor).to(device)
-                y = y.view(-1, 2)
+                y = y.view(-1, y_dim)
 
                 y_pred = self.model(x)
 
@@ -119,7 +120,7 @@ class Execute:
                 self.y_test, test_predictions)
 
             print(
-                f"Epoch {epoch+1}:\t loss: {loss.item():.6f},\t Train error([s,an]): {train_accuary},\t Test error([s,an]):{test_accuracy}")
+                f"Epoch {epoch+1}:\t loss: {loss.item():.6f},\t Train error: {train_accuary},\t Test error:{test_accuracy}")
         torch.save(self.model.state_dict(), PATH)
 
     def evaluation(self):
@@ -141,7 +142,7 @@ class Execute:
         true_positives = 0
         true_negatives = 0
 
-        ans = np.array([0, 0], dtype=np.float64)
+        ans = np.array([0 for i in range(y_dim)], dtype=np.float64)
         for true, pred in zip(grand_truth, predictions):
             # idp = 0
             # for i in range(1, len(pred)):
