@@ -13,7 +13,7 @@ import math
 class Preprocessing:
 
     def __init__(self, args):
-        self.data = 'data/3_1/1/Palantir.CSV'
+        self.data = 'data/3_1/1/GME.CSV'
         # self.data = 'data/1_250-500.csv'
         # self.data = 'data/ag_news.csv'
         self.max_len = args.max_len
@@ -21,7 +21,7 @@ class Preprocessing:
         self.test_size = args.test_size
 
     def load_data(self):
-        print(f'[Loading]\treading {self.data.split("/")[-1]}')
+        print(f'[Loading]\treading "{self.data.split("/")[-1]}"')
         df = pd.read_csv(self.data)
         keys = ['positive', 'rebellion', 'unity']
         print(f'[Format]\tkeys = {keys}')
