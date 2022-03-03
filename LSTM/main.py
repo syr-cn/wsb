@@ -1,3 +1,4 @@
+from json import load
 from re import T
 import numpy as np
 import os
@@ -19,7 +20,6 @@ from torch.utils.data import DataLoader
 from src import parameter_parser
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-PATH = '/home/syr/Music/wsb/LSTM/pretrained/lstm_2'
 y_dim = 3
 
 
@@ -73,16 +73,11 @@ class Execute:
         self.y_test = self.preprocessing.y_test
 
         self.x_train = self.preprocessing.sequence_to_token(raw_x_train)
-        print(self.x_train.shape)
         self.x_test = self.preprocessing.sequence_to_token(raw_x_test)
 
         self.z = self.preprocessing.z
 
-    def train(self):
-        # [TODO] : save and load
-        # if(os.path.exists(PATH)):
-        #     return
-        #     self.model.load_state_dict(torch.load(PATH))
+    def train(self, PATH=None):
         training_set = DatasetMaper(self.x_train, self.y_train)
         test_set = DatasetMaper(self.x_test, self.y_test)
 
@@ -124,7 +119,8 @@ class Execute:
 
             print(
                 f"Epoch {epoch+1}:\t loss: {loss.item():.6f},\t Train error: {train_accuary},\t Test error:{test_accuracy}")
-        torch.save(self.model.state_dict(), PATH)
+        if(PATH):
+            torch.save(self.model, PATH)
 
     def evaluation(self):
 
@@ -140,7 +136,9 @@ class Execute:
 
         return predictions
 
-    def test(self):
+    def test(self, PATH=None):
+        if(PATH):
+            self.model = torch.load(PATH)
         self.model.eval()
         with torch.no_grad():
             for z in self.z:
@@ -151,7 +149,7 @@ class Execute:
                 sentence = sentence_embeding.type(torch.LongTensor).to(device)
                 rslt = self.model(sentence)
                 rslt = rslt.squeeze().detach().cpu().numpy()
-                print(z, rslt, sep='\n')
+                print(z, rslt*2-1, sep='\n')
                 print("")
 #
 
@@ -187,10 +185,12 @@ class Execute:
 
 
 if __name__ == "__main__":
-
+    save_path = '/home/syr/Music/wsb/LSTM/pretrained/GME_1'
+    load_path = '/home/syr/Music/wsb/LSTM/pretrained/GME_1000'
     args = parameter_parser()
 
     execute = Execute(args)
     np.set_printoptions(precision=6)
-    execute.train()
-    execute.test()
+    execute.train(save_path)
+
+    execute.test(save_path)

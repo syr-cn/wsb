@@ -13,7 +13,7 @@ import math
 class Preprocessing:
 
     def __init__(self, args):
-        self.data = 'data/3_1/1/GME.CSV'
+        self.data = 'data/3_1/1/1_amc.CSV'
         # self.data = 'data/1_250-500.csv'
         # self.data = 'data/ag_news.csv'
         self.max_len = args.max_len
