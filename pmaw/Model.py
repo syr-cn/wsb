@@ -34,7 +34,18 @@ class Model:
         print(f'Saved {len(self.sublist)} pieces of Submissions to "{path}".')
 
     def getcom(self, args, fields, path):
-        # Get comments under r/wallstreetbets, includes GME
+        keywords = [
+            ['GME', 'GameStop'],
+            ['amc'],
+            ['Tesla', 'TSLA'],
+            ['Apple', "AAPL"],
+            ['Koss'],
+            ['BB'],
+            ['Tilray', 'TLRY'],
+            ['Palantir', 'PLTR'],
+            ['Nokia', 'NOK']
+        ]  # 关键词合集，大小写不敏感
+
         # added multi-keyword support
         times = [
             dt.datetime(2021, 1, 1, 0, 0),
@@ -53,24 +64,26 @@ class Model:
         ]
         times = [int(i.timestamp()) for i in times]
         self.comlist = []
-        for q in args.q:
-            for i in range(len(times)-1):
-                self.comments = self.api.search_comments(
-                    after=times[i],
-                    before=times[i+1],
-                    fields=fields,
-                    limit=args.comments_limit,
-                    mem_safe=True,
-                    q=q,
-                    safe_exit=True,
-                    sort_type=args.comments_sort_type,
-                    subreddit=args.subreddit
-                )
-                self.comlist.extend([c for c in self.comments])
-            print('\n', end='')
-        self.comdf = pd.DataFrame(self.comlist)
-        self.comdf.to_csv(path)
-        print(f'Saved {len(self.comlist)} pieces of Comments to "{path}".')
+        for keyword in keywords:
+            for q in keyword:
+                for i in range(len(times)-1):
+                    self.comments = self.api.search_comments(
+                        after=times[i],
+                        before=times[i+1],
+                        fields=fields,
+                        limit=args.comments_limit/len(keyword),
+                        mem_safe=True,
+                        q=q,
+                        safe_exit=True,
+                        sort_type=args.comments_sort_type,
+                        subreddit=args.subreddit
+                    )
+                    self.comlist.extend([c for c in self.comments])
+                print('\n', end='')
+            self.comdf = pd.DataFrame(self.comlist)
+            self.comdf.to_csv(f'{path}/{keyword[0]}.csv')
+            print(
+                f'Saved {len(self.comlist)} pieces of Comments to "{path}/{keyword[0]}.csv".')
 
     def len_com(self):
         return len(self.comlist)
