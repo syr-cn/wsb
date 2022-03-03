@@ -2,6 +2,7 @@ from json import load
 from re import T
 import numpy as np
 import os
+import pandas
 
 import torch
 import torch.nn as nn
@@ -151,7 +152,26 @@ class Execute:
                 rslt = rslt.squeeze().detach().cpu().numpy()
                 print(z, rslt*2-1, sep='\n')
                 print("")
-#
+
+    def generate(self, loadPath=None, generatePath=None):
+        if(loadPath):
+            self.model = torch.load(loadPath)
+        self.model.eval()
+        result = []
+        with torch.no_grad():
+            for z in self.z:
+                # z is string
+                sentence_embeding = self.preprocessing.sequence_to_token([z])
+                sentence_embeding = torch.Tensor(sentence_embeding)
+                sentence = sentence_embeding.type(torch.LongTensor).to(device)
+                rslt = self.model(sentence)
+                rslt = rslt.squeeze().detach().cpu().numpy()
+                rslt = rslt*2-1
+                result.append(rslt)
+        df = pandas.DataFrame(
+            result, columns=['positive', 'rebellion', 'unity'])
+        df.insert(0, 'body', self.z)
+        df.to_csv(generatePath)
 
     @staticmethod
     def calculate_accuray(grand_truth, predictions):
@@ -185,12 +205,14 @@ class Execute:
 
 
 if __name__ == "__main__":
-    save_path = '/home/syr/Music/wsb/LSTM/pretrained/GME_1'
-    load_path = '/home/syr/Music/wsb/LSTM/pretrained/GME_1000'
-    args = parameter_parser()
+    save_path = '/home/syr/Music/wsb/LSTM/pretrained/6in1'
+    load_path = '/home/syr/Music/wsb/LSTM/pretrained/3_1-1000/amc'
+    generate_path = '/home/syr/Music/wsb/LSTM/data/out.csv'
 
+    args = parameter_parser()
     execute = Execute(args)
     np.set_printoptions(precision=6)
-    execute.train(save_path)
 
-    execute.test(save_path)
+    # execute.train(save_path)
+    # execute.test(save_path)
+    execute.generate(load_path, generate_path)

@@ -34,7 +34,7 @@ class Preprocessing:
         X = df['body'].values
         Y = df[keys].values
 
-        Z = X[1000:1010]
+        Z = X
         X = X[0:1000]
         Y = Y[0:1000]
 

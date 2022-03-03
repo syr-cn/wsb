@@ -50,7 +50,7 @@ def parameter_parser():
     parser.add_argument("--max_len",
                         dest="max_len",
                         type=int,
-                        default=20,
+                        default=30,
                         help="Maximum sequence length per tweet")
 
     parser.add_argument("--max_words",
