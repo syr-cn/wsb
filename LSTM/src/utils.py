@@ -18,6 +18,10 @@ class Preprocessing:
             args.path,
             'data/3_1/1/GME.CSV'
         )
+        self.test_data = os.path.join(
+            args.path,
+            'data/3_1-12000/GME.csv'
+        )
         self.max_len = args.max_len
         self.max_words = args.max_words
         self.test_size = args.test_size
@@ -33,10 +37,12 @@ class Preprocessing:
         # with pd.option_context('display.max_rows', 999, 'display.max_columns', 999):
         #     print(df)
         # df.drop(['id', 'keyword', 'location'], axis=1, inplace=True)
+
         X = df['body'].values
         Y = df[keys].values
+        df2 = pd.read_csv(self.test_data)
+        Z = df2['body'].values
 
-        Z = X[1000:1020]
         X = X[0:1000]
         Y = Y[0:1000]
 

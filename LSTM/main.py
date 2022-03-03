@@ -67,7 +67,6 @@ class Execute:
         self.preprocessing = Preprocessing(args)
         self.preprocessing.load_data()
         self.preprocessing.prepare_tokens()
-
         raw_x_train = self.preprocessing.x_train
         raw_x_test = self.preprocessing.x_test
 
@@ -207,12 +206,12 @@ class Execute:
 if __name__ == "__main__":
     save_path = 'pretrained/untitled_model'
     load_path = 'pretrained/3_1-1000/GME'
-    generate_path = 'data/untitled.csv'
+    generate_path = 'data/output/untitled.csv'
 
     args = parameter_parser()
     execute = Execute(args)
     np.set_printoptions(precision=6)
 
     # execute.train(save_path)
-    execute.test(load_path)
-    # execute.generate(load_path, generate_path)
+    # execute.test(load_path)
+    execute.generate(load_path, generate_path)
