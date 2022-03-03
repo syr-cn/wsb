@@ -1,3 +1,4 @@
+from ast import arg
 from json import load
 from re import T
 import numpy as np
@@ -78,7 +79,7 @@ class Execute:
 
         self.z = self.preprocessing.z
 
-    def train(self, PATH=None):
+    def train(self, savePath=None):
         training_set = DatasetMaper(self.x_train, self.y_train)
         test_set = DatasetMaper(self.x_test, self.y_test)
 
@@ -120,8 +121,8 @@ class Execute:
 
             print(
                 f"Epoch {epoch+1}:\t loss: {loss.item():.6f},\t Train error: {train_accuary},\t Test error:{test_accuracy}")
-        if(PATH):
-            torch.save(self.model, PATH)
+        if(savePath):
+            torch.save(self.model, os.path.join(args.path, savePath))
 
     def evaluation(self):
 
@@ -137,9 +138,9 @@ class Execute:
 
         return predictions
 
-    def test(self, PATH=None):
-        if(PATH):
-            self.model = torch.load(PATH)
+    def test(self, loadPath=None):
+        if(loadPath):
+            self.model = torch.load(os.path.join(args.path, loadPath))
         self.model.eval()
         with torch.no_grad():
             for z in self.z:
@@ -151,11 +152,10 @@ class Execute:
                 rslt = self.model(sentence)
                 rslt = rslt.squeeze().detach().cpu().numpy()
                 print(z, rslt*2-1, sep='\n')
-                print("")
 
     def generate(self, loadPath=None, generatePath=None):
         if(loadPath):
-            self.model = torch.load(loadPath)
+            self.model = torch.load(os.path.join(args.path, loadPath))
         self.model.eval()
         result = []
         with torch.no_grad():
@@ -171,7 +171,7 @@ class Execute:
         df = pandas.DataFrame(
             result, columns=['positive', 'rebellion', 'unity'])
         df.insert(0, 'body', self.z)
-        df.to_csv(generatePath)
+        df.to_csv(os.path.join(args.path, generatePath))
 
     @staticmethod
     def calculate_accuray(grand_truth, predictions):
@@ -205,14 +205,14 @@ class Execute:
 
 
 if __name__ == "__main__":
-    save_path = '/home/syr/Music/wsb/LSTM/pretrained/6in1'
-    load_path = '/home/syr/Music/wsb/LSTM/pretrained/3_1-1000/amc'
-    generate_path = '/home/syr/Music/wsb/LSTM/data/out.csv'
+    save_path = 'pretrained/untitled_model'
+    load_path = 'pretrained/3_1-1000/GME'
+    generate_path = 'data/untitled.csv'
 
     args = parameter_parser()
     execute = Execute(args)
     np.set_printoptions(precision=6)
 
     # execute.train(save_path)
-    # execute.test(save_path)
-    execute.generate(load_path, generate_path)
+    execute.test(load_path)
+    # execute.generate(load_path, generate_path)

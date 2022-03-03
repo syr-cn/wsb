@@ -8,14 +8,16 @@ from keras.preprocessing.text import Tokenizer
 from sklearn.model_selection import train_test_split
 
 import math
+import os
 
 
 class Preprocessing:
 
     def __init__(self, args):
-        self.data = 'data/3_1/1/1_amc.CSV'
-        # self.data = 'data/1_250-500.csv'
-        # self.data = 'data/ag_news.csv'
+        self.data = os.path.join(
+            args.path,
+            'data/3_1/1/GME.CSV'
+        )
         self.max_len = args.max_len
         self.max_words = args.max_words
         self.test_size = args.test_size
@@ -34,7 +36,7 @@ class Preprocessing:
         X = df['body'].values
         Y = df[keys].values
 
-        Z = X
+        Z = X[1000:1020]
         X = X[0:1000]
         Y = Y[0:1000]
 

@@ -58,4 +58,10 @@ def parameter_parser():
                         type=float,
                         default=1000,
                         help="Maximum number of words in the dictionary")
+
+    parser.add_argument("--path",
+                        dest="path",
+                        type=str,
+                        default='/home/syr/Music/wsb/LSTM',
+                        help="Path of the project")
     return parser.parse_args()
