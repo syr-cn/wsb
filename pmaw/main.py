@@ -14,7 +14,7 @@ parser.add_argument('-after', type=int,
                     default=int(dt.datetime(2021, 1, 1, 0, 0).timestamp()))
 # subreddit
 
-# parser.add_argument('-q', type=list, default=['GME', 'Nokia'])
+# parser.add_argument('-q', type=list, default=['GME', 'Gamestop'])
 # q 为关键字列表，大小写不敏感
 
 parser.add_argument('-subreddit', type=str, default='wallstreetbets')
@@ -49,6 +49,7 @@ comfields = (
 )
 
 args = parser.parse_args()
+os.environ['HTTP_PROXY'] = os.environ['HTTPS_PROXY'] = 'http://localhost:3898'
 
 if __name__ == '__main__':
     model = Model()

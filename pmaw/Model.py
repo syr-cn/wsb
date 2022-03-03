@@ -4,7 +4,6 @@ from pmaw import PushshiftAPI
 import datetime as dt
 
 import os
-os.environ['HTTP_PROXY'] = os.environ['HTTPS_PROXY'] = 'http://localhost:3898'
 
 
 class Model:
@@ -40,7 +39,7 @@ class Model:
             ['Tesla', 'TSLA'],
             ['Apple', "AAPL"],
             ['Koss'],
-            ['BB'],
+            ['BlackBerry', 'BB'],
             ['Tilray', 'TLRY'],
             ['Palantir', 'PLTR'],
             ['Nokia', 'NOK']
