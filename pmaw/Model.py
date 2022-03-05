@@ -26,7 +26,6 @@ class Model:
                 sort_type=args.submissions_sort_type,
                 subreddit=args.subreddit
             )
-            print('\n', end='')
             self.sublist.extend([s for s in self.submissions])
         self.subdf = pd.DataFrame(self.sublist)
         self.subdf.to_csv(path)
@@ -62,15 +61,15 @@ class Model:
             dt.datetime(2022, 1, 1, 0, 0),
         ]
         times = [int(i.timestamp()) for i in times]
-        self.comlist = []
         for keyword in keywords:
+            self.comlist = []
             for q in keyword:
                 for i in range(len(times)-1):
                     self.comments = self.api.search_comments(
                         after=times[i],
                         before=times[i+1],
                         fields=fields,
-                        limit=args.comments_limit/len(keyword),
+                        limit=int(args.comments_limit/len(keyword)),
                         mem_safe=True,
                         q=q,
                         safe_exit=True,
@@ -78,7 +77,7 @@ class Model:
                         subreddit=args.subreddit
                     )
                     self.comlist.extend([c for c in self.comments])
-                print('\n', end='')
+                    print(self.comlist[-1])
             self.comdf = pd.DataFrame(self.comlist)
             self.comdf.to_csv(f'{path}/{keyword[0]}.csv')
             print(
