@@ -26,7 +26,7 @@ parser.add_argument('-comments_sort_type', type=str, default='score',
 parser.add_argument('-submissions_limit', type=int, default=3000)
 parser.add_argument('-comments_limit', type=int, default=1200)
 # 获取的评论条数下限
-parser.add_argument('-num_comments', type=str, default='>5')
+parser.add_argument('-num_comments', type=str, default='>10')
 # response filter
 subfields = (
     'author',
@@ -49,9 +49,10 @@ comfields = (
 )
 
 args = parser.parse_args()
-os.environ['HTTP_PROXY'] = os.environ['HTTPS_PROXY'] = 'http://localhost:3898'
 
 if __name__ == '__main__':
+    # os.environ['HTTP_PROXY'] = os.environ['HTTPS_PROXY'] = 'http://localhost:3898'
+    os.environ['http_proxy'] = os.environ['https_proxy'] = 'http://localhost:3898'
     model = Model()
     # model.getsub(args, subfields,'sub.csv')
     model.getcom(args, comfields, '~/Music/wsb/pmaw/3_1-12000')
